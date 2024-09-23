@@ -24,3 +24,9 @@ class BlogsCRUD:
         blog = result.scalar_one_or_none()
 
         return blog
+
+    async def get_by_user_uuid(self, user_id: UUID) -> list[BlogRead]:
+        statement = select(Blog).where(Blog.author_user_id == user_id)
+        result = await self.session.execute(statement)
+        blogs = result.scalars().all()
+        return blogs

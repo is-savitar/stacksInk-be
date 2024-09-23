@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 # Import models here
 from app.users.models import User
+from app.blogs.models import Blog
 
 
 async def create_tables():

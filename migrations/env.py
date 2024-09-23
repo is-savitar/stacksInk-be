@@ -15,6 +15,7 @@ from pathlib import Path
 # Import models here
 from app.core.models import *
 from app.users.models import User
+from app.blogs.models import Blog
 from sqlmodel import SQLModel
 
 sys.path.append(str(Path(__file__).parent.parent))
