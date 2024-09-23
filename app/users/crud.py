@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status as https_status
 from sqlmodel import select
 from uuid import UUID
 from app.users.models import UserCreate, User, UserRead
@@ -28,4 +29,6 @@ class UsersCRUD:
         statement = select(User).where(User.uuid == user_id)
         result = await self.session.execute(statement)
         user = result.scalar_one_or_none()
+        if user is None:
+            raise HTTPException(status_code=https_status.HTTP_404_NOT_FOUND, detail="User not found")
         return user

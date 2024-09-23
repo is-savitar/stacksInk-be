@@ -1,4 +1,5 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+
 from app.core.models import UUIDModel, TimestampModel
 
 class UserBase(SQLModel):
@@ -18,6 +19,7 @@ class UserProfile(UserBase):
 
 class User(UserBase, UUIDModel, TimestampModel, table=True):
     __tablename__ = "users"
+    blogs :  list["Blog"] = Relationship(back_populates="user", cascade_delete=True)
 
 class UserCreate(UserBase):
     pass
