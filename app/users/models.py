@@ -2,9 +2,15 @@ from sqlmodel import SQLModel, Field, Relationship
 
 from app.core.models import UUIDModel, TimestampModel
 
+
+class ValidateField(SQLModel):
+    field: str
+    value: str
+
+
 class UserBase(SQLModel):
-    username: str = Field(..., min_length=3, max_length=30, unique=True)
-    name: str = Field(..., min_length=3, max_length=30, nullable=True)
+    username: str | None = Field(default=None, min_length=3, unique=True)
+    name: str | None = Field(None, min_length=3)
     profile_picture: str | None= Field(None, min_length=3, max_length=100)
     about_me: str | None= Field(None, min_length=3, max_length=100)
 #     Stacks stuff

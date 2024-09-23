@@ -18,7 +18,7 @@ class Blog(BlogBase, UUIDModel, TimestampModel, table=True):
     user: "User" = Relationship(back_populates="blogs")
 
 
-class BlogRead(BlogBase):
+class BlogRead(BlogBase, UUIDModel):
     user: "User" = Relationship(back_populates="blogs")
 
 class BlogCreate(BlogBase):

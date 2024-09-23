@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import HTTPException, status as https_status
 from sqlmodel import select
 from uuid import UUID
@@ -32,3 +34,20 @@ class UsersCRUD:
         if user is None:
             raise HTTPException(status_code=https_status.HTTP_404_NOT_FOUND, detail="User not found")
         return user
+
+    async def validate_field(self, field: str, value: str) -> tuple[bool, Optional[User]]:
+        valid_fields = ['stx_address_mainnet', "username", "uuid"]
+        if field not in valid_fields:
+            raise HTTPException(
+                status_code=https_status.HTTP_400_BAD_REQUEST, detail="Invalid field")
+
+        query = select(User).where(getattr(User, field) == value)
+        try:
+            result = await self.session.execute(query)
+            user = result.scalar_one_or_none()
+            if user:
+                return True, user
+            return False, None
+        except Exception as e:
+            raise HTTPException(status_code=https_status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                detail=f"An error occurred while checking the field: {str(e)}")
