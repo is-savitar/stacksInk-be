@@ -1,5 +1,6 @@
 from typing import Optional
-
+import logging
+import traceback
 from fastapi import HTTPException, status as https_status
 from sqlmodel import select
 from uuid import UUID
@@ -39,7 +40,7 @@ class UsersCRUD:
         valid_fields = ['stx_address_mainnet', "username", "uuid"]
         if field not in valid_fields:
             raise HTTPException(
-                status_code=https_status.HTTP_400_BAD_REQUEST, detail="Invalid field")
+                status_code=https_status.HTTP_400_BAD_REQUEST, detail="Invalid field to validate")
 
         query = select(User).where(getattr(User, field) == value)
         try:
@@ -49,5 +50,6 @@ class UsersCRUD:
                 return True, user
             return False, None
         except Exception as e:
+            logging.error(f"Unexpected error: {str(e)}\n{traceback.format_exc()}")
             raise HTTPException(status_code=https_status.HTTP_500_INTERNAL_SERVER_ERROR,
                                 detail=f"An error occurred while checking the field: {str(e)}")

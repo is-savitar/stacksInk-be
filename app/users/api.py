@@ -1,5 +1,6 @@
 from uuid import UUID
-
+import logging
+import traceback
 from fastapi import APIRouter, status as https_status, Depends, HTTPException
 
 from app.core.models import StatusMessage
@@ -28,10 +29,10 @@ async def validate_field(data: ValidateField, users: UsersCRUD = Depends(get_use
     try:
         exists, user = await users.validate_field(field=data.field, value=data.value)
         if exists:
-            preview = User.model_validate(user)
-            return StatusMessage(status=True, message=str(preview.uuid))
+            return StatusMessage(status=True, message=str(user.uuid))
         else:
             return StatusMessage(status=False, message="User does not exist")
     except Exception as e:
+        logging.error(f"Unexpected error: {str(e)}\n{traceback.format_exc()}")
         raise HTTPException(status_code=https_status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail=f"An unexpected error occurred: {str(e)}")
