@@ -15,10 +15,10 @@ class UserBase(SQLModel):
     about_me: str | None= Field(None, min_length=3, max_length=100)
 #     Stacks stuff
     prevTxID: str | None = Field(default=None)
-    stx_address_testnet: str | None = Field(default=None)
-    stx_address_mainnet: str | None = Field(default=None)
-    btc_address_mainnet: str | None = Field(default=None)
-    btc_address_testnet: str | None = Field(default=None)
+    stx_address_testnet: str | None = Field(default=None, unique=True)
+    stx_address_mainnet: str | None = Field(default=None, unique=True)
+    btc_address_mainnet: str | None = Field(default=None, unique=True)
+    btc_address_testnet: str | None = Field(default=None, unique=True)
 
 class UserProfile(UserBase):
     followers_count: int = Field(default=0)
