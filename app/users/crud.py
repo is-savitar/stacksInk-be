@@ -1,6 +1,6 @@
 from sqlmodel import select
-
-from app.users.models import UserCreate, User
+from uuid import UUID
+from app.users.models import UserCreate, User, UserRead
 
 
 class UsersCRUD:
@@ -17,9 +17,15 @@ class UsersCRUD:
 
         return user
 
-    async def get_all(self) -> list[User]:
+    async def get_all(self) -> list[UserRead]:
         statement = select(User)
         result = await self.session.execute(statement)
 
         users = result.scalars().all()
         return users
+
+    async def get_by_id(self, user_id: UUID) -> UserRead:
+        statement = select(User).where(User.uuid == user_id)
+        result = await self.session.execute(statement)
+        user = result.scalar_one_or_none()
+        return user
