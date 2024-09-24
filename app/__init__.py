@@ -7,6 +7,6 @@ from app.core.config import Settings, AuthSettings
 load_dotenv(getenv("ENV_FILE"))
 settings = Settings()
 
-# auth_settings = AuthSettingqq
+auth_settings = AuthSettings()
 # s()
 # auth_settings.algorithm =

@@ -31,7 +31,7 @@ class User(UserBase, UUIDModel, TimestampModel, table=True):
     blogs :  list["Blog"] = Relationship(back_populates="user", cascade_delete=True)
 
 class UserCreate(StxAddress):
-    password_hash: str = Field()
+    password: str = Field()
 
 
 class UserRead(UserBase, UUIDModel):
