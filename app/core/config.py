@@ -14,4 +14,5 @@ class Settings(BaseSettings):
 class AuthSettings(BaseSettings):
     secret_key: str
     algorithm: str
-    access_token_expires_minutes: int
+    access_token_expire_seconds: int
+    refresh_token_expire_days: int
