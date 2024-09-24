@@ -3,7 +3,7 @@ import logging
 
 from fastapi import FastAPI
 from sqlmodel import SQLModel
-from app import settings
+from app import settings, auth_settings
 from app.core.database import async_engine
 from app.router.api_v1.endpoints import api_router
 from contextlib import asynccontextmanager
