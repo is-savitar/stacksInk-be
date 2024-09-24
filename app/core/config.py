@@ -16,3 +16,9 @@ class AuthSettings(BaseSettings):
     algorithm: str
     access_token_expire_seconds: int
     refresh_token_expire_days: int
+
+
+class RedisSettings(BaseSettings):
+    redis_host: str = 'localhost'
+    redis_port: int = 6379
+    jti_expiry: int
