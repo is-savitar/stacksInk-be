@@ -3,7 +3,7 @@ from fastapi import APIRouter, status as https_status, Depends
 from app.auth.deps import AccessTokenBearer
 from app.blogs.crud import BlogsCRUD
 from app.blogs.deps import get_blogs_crud
-from app.blogs.models import BlogRead, BlogCreate
+from app.blogs.models import BlogRead, BlogCreate, BlogUpdate
 from uuid import UUID
 
 router = APIRouter()
@@ -13,6 +13,20 @@ access_token_bearer = AccessTokenBearer()
 @router.get("", response_model=BlogRead, status_code=https_status.HTTP_200_OK)
 async def get_blog(blog_id: UUID, crud: BlogsCRUD = Depends(get_blogs_crud)):
     blog = await crud.get_by_id(blog_id=blog_id)
+    return blog
+
+
+@router.patch("", response_model=BlogRead, status_code=https_status.HTTP_200_OK)
+async def patch_blog(blog_id: UUID, data: BlogUpdate, crud: BlogsCRUD = Depends(get_blogs_crud),
+                     user_details=Depends(access_token_bearer)):
+    blog = await crud.patch(blog_id=blog_id, data=data, user_id=user_details["user"]["user_id"])
+    return blog
+
+
+@router.delete("", response_model=BlogRead, status_code=https_status.HTTP_200_OK)
+async def delete_blog(blog_id: UUID, crud: BlogsCRUD = Depends(get_blogs_crud),
+                      user_details=Depends(access_token_bearer)):
+    blog = await crud.delete(blog_id=blog_id, user_id=user_details["user"]["user_id"])
     return blog
 
 

@@ -5,10 +5,27 @@ from app import auth_settings
 from app.auth.crud import AuthCRUD
 from app.auth.deps import get_auth_crud, RefreshTokenBearer, AccessTokenBearer
 from app.auth.utils import create_access_token, verify_passwd_hash
+from app.core.models import StatusMessage
 from app.core.redis import add_jti_to_blocklist
-from app.users.models import UserRead, UserCreate
+from app.users.models import UserRead, UserCreate, ValidateField
+import traceback
+import logging
 
 router = APIRouter()
+
+
+@router.post("/validate", response_model=StatusMessage, status_code=status.HTTP_200_OK)
+async def validate_field(data: ValidateField, crud: AuthCRUD = Depends(get_auth_crud)):
+    try:
+        exists, user = await crud.validate_field(field=data.field, value=data.value)
+        if exists:
+            return StatusMessage(status=True, message=str(user.uuid))
+        else:
+            return StatusMessage(status=False, message="User does not exist")
+    except Exception as e:
+        logging.error(f"Unexpected error: {str(e)}\n{traceback.format_exc()}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=f"An unexpected error occurred: {str(e)}")
 
 
 @router.post("/signup", response_model=UserRead, status_code=status.HTTP_201_CREATED)
@@ -69,3 +86,9 @@ async def revoke_token(token_details: dict = Depends(AccessTokenBearer())):
     jti = token_details["jti"]
     await add_jti_to_blocklist(jti)
 
+    return JSONResponse(
+        content={
+            "message": "Logout successful",
+        },
+        status_code=status.HTTP_200_OK
+    )
