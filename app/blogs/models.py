@@ -23,3 +23,9 @@ class BlogRead(BlogBase, UUIDModel):
 
 class BlogCreate(BlogBase):
     pass
+
+class BlogUpdate(SQLModel):
+    title: str | None = None,
+    tagline: str | None = None,
+    blog_image: str | None = None,
+    blog_content: dict | None = None
