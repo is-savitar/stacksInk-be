@@ -1,4 +1,5 @@
 from fastapi import APIRouter, status as https_status, Depends
+from pydantic.v1.typing import NoneType
 
 from app.auth.deps import AccessTokenBearer
 from app.blogs.crud import BlogsCRUD
@@ -23,11 +24,11 @@ async def patch_blog(blog_id: UUID, data: BlogUpdate, crud: BlogsCRUD = Depends(
     return blog
 
 
-@router.delete("", response_model=BlogRead, status_code=https_status.HTTP_200_OK)
+@router.delete("", status_code=https_status.HTTP_204_NO_CONTENT)
 async def delete_blog(blog_id: UUID, crud: BlogsCRUD = Depends(get_blogs_crud),
                       user_details=Depends(access_token_bearer)):
-    blog = await crud.delete(blog_id=blog_id, user_id=user_details["user"]["user_id"])
-    return blog
+    await crud.delete(blog_id=blog_id, user_id=user_details["user"]["user_id"])
+    return None
 
 
 @router.post("", response_model=BlogRead, status_code=https_status.HTTP_201_CREATED)

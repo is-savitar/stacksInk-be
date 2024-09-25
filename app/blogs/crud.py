@@ -36,8 +36,6 @@ class BlogsCRUD:
 
     async def patch(self, blog_id: UUID, data: BlogUpdate, user_id: UUID) -> BlogRead:
         blog = await self.get_by_id(blog_id=blog_id)
-        if not blog:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="A blog with this id doesn't exist")
 
         if str(blog.author_user_id) != str(user_id):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
@@ -52,13 +50,12 @@ class BlogsCRUD:
 
     async def delete(self, blog_id: UUID, user_id: UUID) -> None:
         blog = await self.get_by_id(blog_id=blog_id)
-        if not blog:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="A blog with this id doesn't exist")
 
         if str(blog.author_user_id) != str(user_id):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                                 detail="You do not have permission to delete this blog")
-        self.session.delete(blog)
+
+        await self.session.delete(blog)
         await self.session.commit()
 
         return None
