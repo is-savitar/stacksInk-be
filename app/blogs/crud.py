@@ -39,7 +39,7 @@ class BlogsCRUD:
         if not blog:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="A blog with this id doesn't exist")
 
-        if blog.author_user_id != user_id:
+        if str(blog.author_user_id) != str(user_id):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                                 detail="You do not have permission to delete this blog")
         new_data = data.model_dump(exclude_unset=True)
@@ -55,7 +55,7 @@ class BlogsCRUD:
         if not blog:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="A blog with this id doesn't exist")
 
-        if blog.author_user_id != user_id:
+        if str(blog.author_user_id) != str(user_id):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                                 detail="You do not have permission to delete this blog")
         self.session.delete(blog)
