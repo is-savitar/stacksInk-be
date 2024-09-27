@@ -11,6 +11,7 @@ class BlogBase(SQLModel):
     author_user_id: UUID = Field(..., foreign_key="users.uuid", ondelete="CASCADE")
     blog_image: str = Field(...)
     blog_content: dict = Field(default_factory=dict, sa_column=Column(JSON))
+    categories: dict = Field(default_factory=dict, sa_column=Column(JSON))
 
 
 class Blog(BlogBase, UUIDModel, TimestampModel, table=True):
