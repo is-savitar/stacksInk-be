@@ -43,11 +43,11 @@ async def login_user(data: UserCreate, crud: AuthCRUD = Depends(get_auth_crud)):
     if user is not None:
         password_valid = verify_passwd_hash(data.password, user.password_hash)
         if password_valid:
-            access_token = create_access_token(data={
+            access_token, access_token_expiry = create_access_token(data={
                 "stx_address_mainnet": user.stx_address_mainnet,
                 "user_id": str(user.uuid)
             })
-            refresh_token = create_access_token(data={
+            refresh_token, refresh_token_expiry = create_access_token(data={
                 "stx_address_mainnet": user.stx_address_mainnet,
                 "user_id": str(user.uuid)
             }, refresh=True, expiry=timedelta(days=auth_settings.refresh_token_expire_days))
@@ -57,6 +57,10 @@ async def login_user(data: UserCreate, crud: AuthCRUD = Depends(get_auth_crud)):
                     "message": "Login successful",
                     "access_token": access_token,
                     "refresh_token": refresh_token,
+                    "expiry": {
+                        "access_token_expiry": access_token_expiry,
+                        "refresh_token_expiry": refresh_token_expiry
+                    },
                     "user": {
                         "stx_address_mainnet": user.stx_address_mainnet,
                         "uuid": str(user.uuid),
@@ -71,10 +75,11 @@ async def get_new_access_token(token_details: dict = Depends(RefreshTokenBearer(
     expiry_timestamp = token_details["exp"]
     print(token_details)
     if datetime.fromtimestamp(expiry_timestamp) > datetime.now():
-        new_access_token = create_access_token(data=token_details["user"])
+        new_access_token, expiry = create_access_token(data=token_details["user"])
         return JSONResponse(
             content={
                 "access_token": new_access_token,
+                "access_token_expiry": expiry,
             }
         )
 

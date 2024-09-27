@@ -25,11 +25,13 @@ async def get_user_by_uuid(user_id: UUID, crud: UsersCRUD = Depends(get_users_cr
 @router.patch("", response_model=UserRead, status_code=https_status.HTTP_200_OK)
 async def patch_user(user_id: UUID, data: UserUpdate, crud: UsersCRUD = Depends(get_users_crud),
                      user_details=Depends(access_token_bearer)):
-    if user_details["user"]["user_id"] != user_id:
+    print(user_details["user"]["user_id"], user_id, user_details["user"]["user_id"] == user_id )
+    if str(user_details["user"]["user_id"]) == str(user_id):
+        user = await crud.patch(user_id=user_id, data=data)
+        return user
+    else:
         raise HTTPException(status_code=https_status.HTTP_403_FORBIDDEN,
                             detail="You are not authorized to perform this action.")
-    user = await crud.patch(user_id=user_id, data=data)
-    return user
 
 
 @router.get("/me", response_model=UserRead, status_code=https_status.HTTP_200_OK)

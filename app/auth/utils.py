@@ -23,12 +23,13 @@ def verify_passwd_hash(password: str, hashed_password: str) -> bool:
     return password_hash
 
 
-def create_access_token(data: dict, expiry: timedelta = None, refresh: bool = False) -> str:
+def create_access_token(data: dict, expiry: timedelta = None, refresh: bool = False):
+    expiry_time = datetime.now() + (
+        expiry if expiry is not None else timedelta(seconds=auth_settings.access_token_expire_seconds)
+    )
     payload = {
         "user": data,
-        "exp": datetime.now() + (
-            expiry if expiry is not None else timedelta(seconds=auth_settings.access_token_expire_seconds)
-        ),
+        "exp": expiry_time,
         "jti": str(uuid.uuid4()),
         "refresh_token": refresh
     }
@@ -37,7 +38,7 @@ def create_access_token(data: dict, expiry: timedelta = None, refresh: bool = Fa
         key=auth_settings.secret_key,
         algorithm=auth_settings.algorithm,
     )
-    return token
+    return token, int(expiry_time.timestamp())
 
 
 def decode_token(token: str) -> dict | None:
